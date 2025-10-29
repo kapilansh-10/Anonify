@@ -1,4 +1,5 @@
 "use client"
+import { Card } from "@/components/ui/card";
 import { useEffect, useState } from "react"
 
 export default function Dashboard() {
@@ -24,10 +25,10 @@ export default function Dashboard() {
     },[])
 
     if(loading){
-        return <div className="flex justify-center items-center mt-5 pt-5 text-4xl font-bold ">Loading...</div>
+        return <div className="text-center mt-10 text-gray-500">Loading...</div>
     }
     if(error) {
-        return <div>Error: {error}</div>
+        return <div className="text-center mt-10 text-red-500">Error: {error}</div>
     }
     if(messages.length === 0) {
         return <div>No messages yet</div>
@@ -45,18 +46,24 @@ export default function Dashboard() {
     }
 
     return (
-        <div className="max-w-2xl mx-auto p-6">
-            <h1 className="text-2xl font-bold mb-4">Your Anonymous Messages 💌</h1>
-            <ul className="space-y-3">
+        <div className="max-w-3xl mx-auto p-6">
+            <div className="flex justify-between items-center mb-6">
+                <h1 className="text-2xl font-bold mb-4">Your Anonymous Messages 💌</h1>
+                <button>Sign Out</button>
+            </div>
+
+        {messaegs.length === 0  ? (
+            <p className="text-gray-500 text-center mt-10">No messages Yet</p>
+        ) : (
+            <div>
                 {messages.map((message) => (
-                    <li key={message.id} className="p-4 bg-gray-800 rounded-xl shadow">
-                        <p>{message.content}</p>
-                        <p className="text-sm">
-                            {formatDate(message.createdAt)}
-                        </p>
-                    </li>
+                    <Card key={message.id} className="p-4">
+                        <p className="text-gray-800">{message.content}</p>
+                        <p className="text-sm text-gray-500 mt-2">{formatDate(message.createdAt)}</p>
+                    </Card>
                 ))}
-            </ul>
+            </div>
+            )}
         </div>
     )
 }
