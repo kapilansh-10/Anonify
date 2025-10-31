@@ -1,8 +1,16 @@
 "use client"
 import { Card } from "@/components/ui/card";
-import { useEffect, useState } from "react"
+import { Button } from "@/components/ui/button";
+import { signOut } from "next-auth/react";
+import { useEffect, useState } from "react";
+import { useSession } from "next-auth/react";
+import { toast } from "sonner";
+
+
 
 export default function Dashboard() {
+
+    const { data: session } = useSession();
 
     const [loading, setLoading] = useState(true);
     const [messages, setMessages] = useState([]);
@@ -24,14 +32,46 @@ export default function Dashboard() {
         fetchMessages()
     },[])
 
+    console.log("Session Data",session)
+
+    const handleCopyLink = () => {
+
+        if(!session?.user?.username){
+            toast.error("You must be logged in to copy your link ❌");
+            return;
+        }
+
+        const link = `${window.location.origin}/u/${session?.user?.username}`;
+        navigator.clipboard.writeText(link);
+        toast.success("Profile link copied to clipboard! 📋");
+    }
+
+
     if(loading){
         return <div className="text-center mt-10 text-gray-500">Loading...</div>
     }
     if(error) {
         return <div className="text-center mt-10 text-red-500">Error: {error}</div>
     }
-    if(messages.length === 0) {
-        return <div>No messages yet</div>
+    if(!messages || messages.length === 0) {
+        return (
+            <div className="min-h-screen flex flex-col items-center justify-center bg-linear-to-b from-neutral-50 to-neutral-100 text-center">
+                <div className="p-8 bg-white shadow-sm rounded-2xl border border-gray-200 max-w-md">
+                    <h2 className="text-xl font-semibold text-gray-800">
+                        No messages Yet 💌
+                    </h2>
+                    <p className="text-gray-500 mt-2">
+                        You haven't received any anonymous messages yet.
+                        Share your link and see what people say
+                    </p>
+                    <button className="mt-4 px-4 py-2 rounded-lg  bg-black text-white hover:bg-gray-800 transition"
+                    onClick={handleCopyLink}
+                    >
+                        Copy Profile Link
+                    </button>
+                </div>
+            </div>
+        )
     }
 
     const formatDate = (isoDate) => {
@@ -41,29 +81,36 @@ export default function Dashboard() {
             year: "numeric",
             hour: "2-digit",
             minute: "2-digit",
-            hour12: false
+            hour12: true
         })
     }
 
     return (
-        <div className="max-w-3xl mx-auto p-6">
+        <div className="min-h-screen bg-linear-to-b from-neutral-50 p-6">
+            <div className="max-w-3xl mx-auto p-6">
             <div className="flex justify-between items-center mb-6">
-                <h1 className="text-2xl font-bold mb-4">Your Anonymous Messages 💌</h1>
-                <button>Sign Out</button>
+                <h1 className="text-3xl font-semibold tracking-tight">Your Anonymous Messages 💌</h1>
+                <Button 
+                    variant="outline" 
+                    onClick={() => signOut()} 
+                    className="text-sm font-medium hover:bg-gray-100"
+                    >
+                Sign Out</Button>
             </div>
 
-        {messaegs.length === 0  ? (
-            <p className="text-gray-500 text-center mt-10">No messages Yet</p>
+        {messages.length === 0  ? (
+            <p className="flex flex-col items-center justify-center h-64 rounded-lg border border-dashed border-gray-300 text-gray-500 bg-white/70 backdrop-blur-sm shadow-sm">No messages Yet</p>
         ) : (
             <div>
                 {messages.map((message) => (
-                    <Card key={message.id} className="p-4">
-                        <p className="text-gray-800">{message.content}</p>
-                        <p className="text-sm text-gray-500 mt-2">{formatDate(message.createdAt)}</p>
+                    <Card key={message.id} className="p-5 mt-4 shadow-sm border border-gray-200 hover:shadow-md transition rounded-2xl bg-white">
+                        <p className="text-gray-800 text-base">{message.content}</p>
+                        <p className="text-xs text-gray-500 mt-2">{formatDate(message.createdAt)}</p>
                     </Card>
                 ))}
             </div>
             )}
+        </div>
         </div>
     )
 }
