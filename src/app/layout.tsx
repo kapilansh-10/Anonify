@@ -15,8 +15,11 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "Anonify – Anonymous Feedback App",
+  title: "Anonify ",
   description: "Send and receive anonymous feedback with ease.",
+  icons: {
+    icon: "/anonify.jpg"
+  }
 };
 
 export default function RootLayout({
