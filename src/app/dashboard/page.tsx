@@ -5,10 +5,13 @@ import { signOut } from "next-auth/react";
 import { useEffect, useState } from "react";
 import { useSession } from "next-auth/react";
 import { toast } from "sonner";
+import { useParams } from "next/navigation";
 
 
 
 export default function Dashboard() {
+    
+    const { username } = useParams();
 
     const { data: session } = useSession();
 
@@ -44,6 +47,32 @@ export default function Dashboard() {
         const link = `${window.location.origin}/u/${session?.user?.username}`;
         navigator.clipboard.writeText(link);
         toast.success("Profile link copied to clipboard! 📋");
+    }
+
+    const handleDelete = async (messageId) => {
+
+        if(!confirm("Are you sure you want to delete this message?")) return;
+
+        try {
+            const response = await fetch("/api/messages/delete", {
+                method: "DELETE",
+                body: JSON.stringify({
+                    messageId
+                })
+            })
+            if (!response.ok) {
+                const data = await response.json();
+                toast.error(data.error || "Failed to delete message");
+                return;
+            }
+            if(response.ok) {
+                toast.success("Message deleted ✅");
+                setMessages(prev => prev.filter(msg => msg.id !== messageId))
+            }
+        } 
+        catch (error) {
+            toast.error("Failed to delete message ❌")
+        }
     }
 
 
@@ -99,13 +128,14 @@ export default function Dashboard() {
             </div>
 
         {messages.length === 0  ? (
-            <p className="flex flex-col items-center justify-center h-64 rounded-lg border border-dashed border-gray-300 text-gray-500 bg-white/70 backdrop-blur-sm shadow-sm">No messages Yet</p>
+            <p className="items-center justify-center h-64 rounded-lg border border-dashed border-gray-300 text-gray-500 bg-white/70 backdrop-blur-sm shadow-sm">No messages Yet</p>
         ) : (
-            <div>
+            <div className="flex flex-col">
                 {messages.map((message) => (
-                    <Card key={message.id} className="p-5 mt-4 shadow-sm border border-gray-200 hover:shadow-md transition rounded-2xl bg-white">
+                    <Card key={message.id} className="justify-content: space-evenly p-5 mt-4 shadow-sm border border-gray-200 hover:shadow-md transition rounded-2xl bg-white">
                         <p className="text-gray-800 text-base">{message.content}</p>
                         <p className="text-xs text-gray-500 mt-2">{formatDate(message.createdAt)}</p>
+                        <Button variant={"destructive"} className="text-sm w-fit bg-red-500" onClick={() => handleDelete(message.id)}>Delete 🗑️</Button>
                     </Card>
                 ))}
             </div>
