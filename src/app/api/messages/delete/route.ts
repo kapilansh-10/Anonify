@@ -1,7 +1,7 @@
 import { PrismaClient } from "@prisma/client";
 import { getServerSession } from "next-auth";
 import { NextRequest, NextResponse } from "next/server";
-import { authOptions } from "../../auth/[...nextauth]/route";
+import { authOptions } from "@/lib/auth";
 
 
 const prisma = new PrismaClient();
@@ -23,6 +23,10 @@ export async function DELETE(req: NextRequest) {
                 id: messageId
             }
         })
+
+        if (!message) {
+            return NextResponse.json({ error : "Message not found"}, {status: 404})
+        }
         
         if(message.userId === session.user.id){
             const deleteMessage = await prisma.message.delete({
@@ -30,14 +34,13 @@ export async function DELETE(req: NextRequest) {
                     id: messageId
                 }
             })
-            return NextResponse.json({deleteMessage}, {status: 200})
+            return NextResponse.json({success: true, deleteMessage})
         }
         else {
-            return NextResponse.json({message: "No message found"}, {status:403} )
+            return NextResponse.json({error: "No message found"}, {status:403} )
         }
     } 
-    catch (error) {
-        console.error(error)
+    catch {
         return NextResponse.json({message: "Error in deleting the message"}, {status: 500})
     }
 

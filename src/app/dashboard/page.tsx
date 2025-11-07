@@ -16,7 +16,7 @@ export default function Dashboard() {
     const { data: session } = useSession();
 
     const [loading, setLoading] = useState(true);
-    const [messages, setMessages] = useState([]);
+    const [messages, setMessages] = useState<{ id: string; content: string; createdAt: string}[]>([]);
     const [error, setError] = useState<string | null>(null);
 
     useEffect( () => {
@@ -49,7 +49,7 @@ export default function Dashboard() {
         toast.success("Profile link copied to clipboard! 📋");
     }
 
-    const handleDelete = async (messageId) => {
+    const handleDelete = async (messageId: string) => {
 
         if(!confirm("Are you sure you want to delete this message?")) return;
 
@@ -103,7 +103,7 @@ export default function Dashboard() {
         )
     }
 
-    const formatDate = (isoDate) => {
+    const formatDate = (isoDate: number) => {
         return new Date(isoDate).toLocaleString("en-GB",{
             day: "2-digit",
             month: "short",
@@ -134,7 +134,7 @@ export default function Dashboard() {
                 {messages.map((message) => (
                     <Card key={message.id} className="justify-content: space-evenly p-5 mt-4 shadow-sm border border-gray-200 hover:shadow-md transition rounded-2xl bg-white">
                         <p className="text-gray-800 text-base">{message.content}</p>
-                        <p className="text-xs text-gray-500 mt-2">{formatDate(message.createdAt)}</p>
+                        <p className="text-xs text-gray-500 mt-2">{formatDate(new Date(message.createdAt).getTime())}</p>
                         <Button variant={"destructive"} className="text-sm w-fit bg-red-500" onClick={() => handleDelete(message.id)}>Delete 🗑️</Button>
                     </Card>
                 ))}
