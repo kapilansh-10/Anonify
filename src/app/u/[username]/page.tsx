@@ -38,9 +38,8 @@ export default function UserPage() {
                 // setStatus("❌ User not found")
             }
         } 
-        catch (error) {
+        catch {
             toast.error("Something went wrong. Try again !")
-            console.error("Something went wrong") 
         }
 
         setLoading(false)

@@ -5,7 +5,7 @@ import { signOut } from "next-auth/react";
 import { useEffect, useState } from "react";
 import { useSession } from "next-auth/react";
 import { toast } from "sonner";
-import { useParams } from "next/navigation";
+
 
 
 
@@ -27,9 +27,8 @@ export default function Dashboard() {
                 const data = await response.json();
                 setMessages(data.messages)  
             } 
-            catch (error) {
+            catch {
                 setError("Failed to load messages ❌")
-                console.error("Failed to load messages")
             }
             setLoading(false)
         }
@@ -71,9 +70,8 @@ export default function Dashboard() {
                 setMessages(prev => prev.filter(msg => msg.id !== messageId))
             }
         } 
-        catch (error) {
+        catch {
             toast.error("Failed to delete message ❌")
-            console.error("Failed to delete message")
         }
     }
 
@@ -92,7 +90,7 @@ export default function Dashboard() {
                         No messages Yet 💌
                     </h2>
                     <p className="text-gray-500 mt-2">
-                        You haven't received any anonymous messages yet.
+                        You haven&apos;t received any anonymous messages yet.
                         Share your link and see what people say
                     </p>
                     <button className="mt-4 px-4 py-2 rounded-lg  bg-black text-white hover:bg-gray-800 transition"
