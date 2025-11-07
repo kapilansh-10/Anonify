@@ -25,7 +25,7 @@ export const authOptions = {
         return token;
       },
 
-        //@ts-ignore
+
       async  session({ session, token}) {
             if (token && session.user) {
               session.user.id = token.sub!

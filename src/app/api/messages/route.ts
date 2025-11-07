@@ -25,12 +25,12 @@ export async function POST(req: NextRequest) {
             return NextResponse.json({error: "User not found"}, {status: 404});
         }
 
-        const message = await prisma.message.create({
-            data: {
-                content,
-                userId: user.id // link the message to the user
-            }
-        })
+        // const message = await prisma.message.create({
+        //     data: {
+        //         content,
+        //         userId: user.id // link the message to the user
+        //     }
+        // })
         return NextResponse.json({ success: true, message: "Message sent!"})
     } 
     catch (error) {

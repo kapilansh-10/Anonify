@@ -7,7 +7,7 @@ import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { toast } from "sonner";
 
-export default function UserPage({params}) {
+export default function UserPage() {
 
     const { username } = useParams();
 
@@ -35,11 +35,12 @@ export default function UserPage({params}) {
             }
             else {
                 toast.error("User not found")
-                setStatus("❌ User not found")
+                // setStatus("❌ User not found")
             }
         } 
         catch (error) {
-            toast.error("Something went wrong. Try again !")    
+            toast.error("Something went wrong. Try again !")
+            console.error("Something went wrong") 
         }
 
         setLoading(false)

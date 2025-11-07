@@ -11,7 +11,7 @@ import { useParams } from "next/navigation";
 
 export default function Dashboard() {
     
-    const { username } = useParams();
+    // const { username } = useParams();
 
     const { data: session } = useSession();
 
@@ -29,6 +29,7 @@ export default function Dashboard() {
             } 
             catch (error) {
                 setError("Failed to load messages ❌")
+                console.error("Failed to load messages")
             }
             setLoading(false)
         }
@@ -72,6 +73,7 @@ export default function Dashboard() {
         } 
         catch (error) {
             toast.error("Failed to delete message ❌")
+            console.error("Failed to delete message")
         }
     }
 
