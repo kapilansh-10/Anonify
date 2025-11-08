@@ -1,7 +1,5 @@
-import { PrismaClient } from "@prisma/client";
 import { NextRequest, NextResponse } from "next/server";
-
-const prisma = new PrismaClient()
+import { prisma } from "@/lib/prisma";
 
 export async function POST(req: NextRequest) {
 
@@ -19,19 +17,23 @@ export async function POST(req: NextRequest) {
     try {
         const user = await prisma.user.findUnique({
             where: { username },
-        })
+            select: { id: true }
+        });
 
-        if(!user) {
-            return NextResponse.json({error: "User not found"}, {status: 404});
+        if (!user) {
+            return NextResponse.json({ error: "User not found" }, { status: 404 });
         }
 
-        // const message = await prisma.message.create({
-        //     data: {
-        //         content,
-        //         userId: user.id // link the message to the user
-        //     }
-        // })
-        return NextResponse.json({ success: true, message: "Message sent!"})
+        // Persist the message
+        const created = await prisma.message.create({
+            data: {
+                content,
+                userId: user.id
+            },
+            select: { id: true, content: true, createdAt: true }
+        });
+
+        return NextResponse.json({ success: true, message: "Message sent!", data: created }, { status: 201 });
     } 
     catch (error) {
         console.error("Error in creating a message",error);
