@@ -6,7 +6,7 @@ import Link from "next/link"
 
 export default function Hero() {
 
-    const { data: session } = useSession();
+    const { data: session, status } = useSession();
 
     const handleCopy = () => {
         if(!session?.user?.username) {
@@ -34,8 +34,8 @@ export default function Hero() {
                     No signup hasslers for senders.
                 </p>
 
-                <div className="mt-8 flex flex-col items-center justify-center gap-3 sm:flex-row">
-                    {session ? (
+                <div className="mt-8 flex flex-col items-center justify-center gap-3 sm:flex-row min-h-[60px]">
+                    {status === "loading" ? null : session ? (
                         <>
                             <Link 
                                 href="/dashboard" 
