@@ -8,18 +8,19 @@ datasource db {
 }
 
 model User {
-  id            String    @id @default(cuid())
+  id            String   @id @default(cuid())
   name          String?
-  email         String?   @unique
+  email         String?  @unique
   emailVerified DateTime?
-  username      String?   @unique
+  username      String?  @unique
   image         String?
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
   accounts      Account[]
-  messages      Message[]
   sessions      Session[]
+  messages      Message[]
 }
+
 
 model Account {
   id                String  @id @default(cuid())
